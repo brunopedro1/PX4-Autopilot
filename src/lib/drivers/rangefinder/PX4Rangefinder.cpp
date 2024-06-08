@@ -82,3 +82,22 @@ void PX4Rangefinder::update(const hrt_abstime &timestamp_sample, const float dis
 
 	_distance_sensor_pub.update();
 }
+
+void PX4Rangefinder::s_update(const hrt_abstime &timestamp_sample, const float distance, const float yaw, const int8_t quality)
+{
+	distance_sensor_s &report = _distance_sensor_pub.get();
+
+	report.timestamp = timestamp_sample;
+	report.current_distance = distance;
+	report.current_yaw = yaw;
+	report.signal_quality = quality;
+
+	// if quality is unavailable (-1) set to 0 if distance is outside bounds
+	if (quality < 0) {
+		if ((distance < report.min_distance) || (distance > report.max_distance)) {
+			report.signal_quality = 0;
+		}
+	}
+
+	_distance_sensor_pub.update();
+}

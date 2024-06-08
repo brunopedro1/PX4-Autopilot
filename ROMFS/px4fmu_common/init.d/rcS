@@ -573,7 +573,13 @@ unset SDCARD_FORMAT
 unset STARTUP_TUNE
 unset VEHICLE_TYPE
 
+
 #
 # Boot is complete, inform MAVLink app(s) that the system is now fully up and running.
 #
 mavlink boot_complete
+
+
+# Set the stream rate of the DISTANCE_SENSOR MAVLink message to 40Hz (case of 2 sonars and 2 lasers)
+sleep 10
+mavlink stream -d /dev/ttyACM0 -s DISTANCE_SENSOR -r 40

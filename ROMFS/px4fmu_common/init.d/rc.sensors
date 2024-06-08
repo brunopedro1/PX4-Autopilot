@@ -8,6 +8,7 @@
 #                           Begin Optional drivers                            #
 ###############################################################################
 
+
 if param compare -s SENS_EN_BATT 1
 then
 	batt_smbus start -X
@@ -61,7 +62,8 @@ fi
 # Lightware i2c lidar sensor
 if param greater -s SENS_EN_SF1XX 0
 then
-	lightware_laser_i2c start -X
+	lightware_laser_i2c start -X -a 102 -R 0
+	lightware_laser_i2c start -X -a 103 -R 2
 fi
 
 # Sensor HY-SRF05 or HC-SR05 ultrasonic sensor
@@ -225,3 +227,4 @@ then
 	# start last (wait for possible icm20948 passthrough mode)
 	ak09916 -X -q start
 fi
+

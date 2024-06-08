@@ -61,6 +61,7 @@ public:
 	void set_orientation(const uint8_t device_orientation = distance_sensor_s::ROTATION_DOWNWARD_FACING);
 
 	void update(const hrt_abstime &timestamp_sample, const float distance, const int8_t quality = -1);
+	void s_update(const hrt_abstime &timestamp_sample, const float distance, const float yaw, const int8_t quality = -1);
 
 	int get_instance() { return _distance_sensor_pub.get_instance(); };
 

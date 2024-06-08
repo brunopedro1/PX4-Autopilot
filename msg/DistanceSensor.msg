@@ -6,6 +6,7 @@ uint32 device_id		# unique device ID for the sensor that does not change between
 
 float32 min_distance		# Minimum distance the sensor can measure (in m)
 float32 max_distance		# Maximum distance the sensor can measure (in m)
+float32 current_yaw		# Current yaw scanning angle (in deg) ----------------> changed (from Marta P.)
 float32 current_distance	# Current distance reading (in m)
 float32 variance		# Measurement variance (in m^2), 0 for unknown / invalid readings
 int8 signal_quality		# Signal quality in percent (0...100%), where 0 = invalid signal, 100 = perfect signal, and -1 = unknown signal quality.

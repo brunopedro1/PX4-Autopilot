@@ -161,6 +161,7 @@ int SF45LaserSerial::collect()
 	uint8_t readbuf[SF45_MAX_PAYLOAD];
 
 	float distance_m = -1.0f;
+	float yaw_deg = 0.0f;
 
 	/* read from the sensor (uart buffer) */
 	const hrt_abstime timestamp_sample = hrt_absolute_time();
@@ -201,7 +202,7 @@ int SF45LaserSerial::collect()
 			}
 
 			if (_init_complete) {
-				sf45_process_replies(&distance_m);
+				sf45_process_replies(&distance_m, &yaw_deg);
 			} // end if
 
 		} else {
@@ -237,8 +238,9 @@ int SF45LaserSerial::collect()
 	}
 
 	PX4_DEBUG("val (float): %8.4f, raw: %s, valid: %s", (double)distance_m, _linebuf, ((_crc_valid) ? "OK" : "NO"));
-	_px4_rangefinder.update(timestamp_sample, distance_m);
-
+	//_px4_rangefinder.update(timestamp_sample, distance_m);
+	PX4_INFO("\n MARTA %llu DIST: %8.4f, YAW: %8.4f, valid: %s \n", timestamp_sample, (double)distance_m, (double)yaw_deg,((_crc_valid) ? "OK" : "NO"));
+	_px4_rangefinder.s_update(timestamp_sample, distance_m, yaw_deg); // include the publish of yaw angle (from Marta P.)
 	perf_end(_sample_perf);
 
 	return PX4_OK;
@@ -647,7 +649,7 @@ void SF45LaserSerial::sf45_send(uint8_t msg_id, bool write, int *data, uint8_t d
 	}
 }
 
-void SF45LaserSerial::sf45_process_replies(float *distance_m)
+void SF45LaserSerial::sf45_process_replies(float *distance_m, float *yaw_deg)
 {
 
 	switch (rx_field.msg_id) {
@@ -659,10 +661,10 @@ void SF45LaserSerial::sf45_process_replies(float *distance_m)
 			int16_t scaled_yaw = 0;
 
 			// The sensor scans from 0 to -160, so extract negative angle from int16 and represent as if a float
-			if (raw_yaw > 32000) {
-				raw_yaw = raw_yaw - 65535;
+			//if (raw_yaw > 32000) {
+			//	raw_yaw = raw_yaw - 65535;
 
-			}
+			//}
 
 			// The sensor is facing downward, so the sensor is flipped about it's x-axis -inverse of each yaw angle
 			if (_orient_cfg == 1) {
@@ -696,6 +698,7 @@ void SF45LaserSerial::sf45_process_replies(float *distance_m)
 			}
 
 			scaled_yaw = raw_yaw * SF45_SCALE_FACTOR;
+			*yaw_deg = scaled_yaw;
 
 			// Convert to meters for rangefinder update
 			*distance_m = raw_distance * SF45_SCALE_FACTOR;

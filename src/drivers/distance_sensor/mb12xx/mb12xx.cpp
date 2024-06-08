@@ -70,7 +70,7 @@ using namespace time_literals;
 
 /* Configuration Constants */
 #define MB12XX_BASE_ADDR                        0x70   // 7-bit address is 0x70 = 112. 8-bit address is 0xE0 = 224.
-#define MB12XX_MIN_ADDR                         0x5A   // 7-bit address is 0x5A = 90.  8-bit address is 0xB4 = 180.
+#define MB12XX_MIN_ADDR                         0x68   // 7-bit address is 0x5A = 90.  8-bit address is 0xB4 = 180. (Thesis: changed to 0x68 to limit the loop to the necessary addresses)
 #define MB12XX_BUS_SPEED                        100000 // 100kHz bus speed.
 
 /* MB12xx Registers addresses */
@@ -83,7 +83,7 @@ using namespace time_literals;
 #define MB12XX_MAX_DISTANCE                     (7.65f)
 
 #define MB12XX_MEASURE_INTERVAL                 100_ms // 60ms minimum for one sonar.
-#define MB12XX_INTERVAL_BETWEEN_SUCCESIVE_FIRES 100_ms // 30ms minimum between each sonar measurement (watch out for interference!).
+#define MB12XX_INTERVAL_BETWEEN_SUCCESIVE_FIRES 50_ms // 30ms minimum between each sonar measurement (watch out for interference!).
 
 class MB12XX : public device::I2C, public ModuleParams, public I2CSPIDriver<MB12XX>
 {
@@ -291,8 +291,8 @@ MB12XX::init()
 	}
 
 	// Check for connected rangefinders on each i2c port by decrementing from the base address,
-	// (MB12XX_BASE_ADDR = 112, MB12XX_MIN_ADDR = 90).
-	for (uint8_t address = MB12XX_BASE_ADDR; address > MB12XX_MIN_ADDR ; address--) {
+	// (MB12XX_BASE_ADDR = 112, MB12XX_MIN_ADDR = 90 (Thesis: changed to 104)).
+	for (uint8_t address = MB12XX_BASE_ADDR; address >= MB12XX_MIN_ADDR ; address--) {
 		set_device_address(address);
 
 		if (measure() == PX4_OK) {
@@ -414,7 +414,7 @@ MB12XX::print_usage()
 	PRINT_MODULE_USAGE_COMMAND("start");
 	PRINT_MODULE_USAGE_PARAMS_I2C_SPI_DRIVER(true, false);
 	PRINT_MODULE_USAGE_COMMAND("set_address");
-	PRINT_MODULE_USAGE_PARAMS_I2C_ADDRESS(0x70);
+	PRINT_MODULE_USAGE_PARAMS_I2C_ADDRESS(0x68);
 	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
 }
 
