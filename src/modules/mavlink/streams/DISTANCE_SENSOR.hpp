@@ -94,6 +94,8 @@ private:
 				msg.min_distance     = dist_sensor.min_distance * 1e2f;     // m to cm
 				msg.orientation      = dist_sensor.orientation;
 				msg.covariance       = dist_sensor.variance * 1e4f;         // m^2 to cm^2
+				msg.current_yaw = dist_sensor.current_yaw; 
+				msg.device_id = dist_sensor.device_id; 
 
 				mavlink_msg_distance_sensor_send_struct(_mavlink->get_channel(), &msg);
 

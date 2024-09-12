@@ -911,8 +911,10 @@ MavlinkReceiver::handle_message_distance_sensor(mavlink_message_t *msg)
 	ds.q[2]             = dist_sensor.quaternion[2];
 	ds.q[3]             = dist_sensor.quaternion[3];
 	ds.type             = dist_sensor.type;
-	ds.device_id        = device_id.devid;
+	//ds.device_id        = device_id.devid;
+	ds.device_id        = dist_sensor.device_id;
 	ds.orientation      = dist_sensor.orientation;
+	ds.current_yaw = static_cast<float>(dist_sensor.current_yaw);
 
 	// MAVLink DISTANCE_SENSOR signal_quality value of 0 means unset/unknown
 	// quality value. Also it comes normalised between 1 and 100 while the uORB

@@ -1558,6 +1558,8 @@ int SimulatorMavlink::publish_distance_topic(const mavlink_distance_sensor_t *di
 		}
 	}
 
+	dist.current_yaw = dist_mavlink->current_yaw;
+	
 	return PX4_OK;
 }
 
